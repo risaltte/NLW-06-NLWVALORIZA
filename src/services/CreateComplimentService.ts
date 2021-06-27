@@ -1,6 +1,8 @@
 import { getCustomRepository } from "typeorm";
+import { getTemplateEmailNotifyComplimentsReceive } from "../Email/templates/notifyComplimentReceive";
 import { ComplimentsRepositories } from "../repositories/ComplimentsRepositories";
 import { UsersRepositories } from "../repositories/UsersRepositories";
+import { SendEmailService } from "./SendEmailService";
 
 
 interface IComplimentRequest {
@@ -21,19 +23,29 @@ class CreateComplimentService {
         }
         
         const userReceiverExists = await usersRepositories.findOne(user_receiver);
-
+        
         if (!userReceiverExists) {
             throw new Error("User receiver does not exists!");            
         }
-
+        
         const compliment = complimentsRepositories.create({
             tag_id,
             user_receiver,
             user_sender,
             message
         });
-
+        
         await complimentsRepositories.save(compliment);
+        
+        const sendEmailService = new SendEmailService();
+        const emailMessage = getTemplateEmailNotifyComplimentsReceive(userReceiverExists.name);
+        
+        await sendEmailService.execute({
+            sender_email: "risaltte.tests@gmail.com",
+            recipient_email: userReceiverExists.email,
+            subjetc: "Você recebeu um novo elogio",
+            message: emailMessage
+        });
 
         return compliment;
 

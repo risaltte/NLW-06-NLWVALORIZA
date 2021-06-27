@@ -2,3 +2,5 @@
 node_modules/
 
 README.md
+
+src/database/database.sqlite
