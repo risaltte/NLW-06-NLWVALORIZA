@@ -41,7 +41,7 @@ class CreateComplimentService {
         const emailMessage = getTemplateEmailNotifyComplimentsReceive(userReceiverExists.name);
         
         await sendEmailService.execute({
-            sender_email: "risaltte.tests@gmail.com",
+            sender_email: "email@gmail.com",
             recipient_email: userReceiverExists.email,
             subjetc: "Você recebeu um novo elogio",
             message: emailMessage
